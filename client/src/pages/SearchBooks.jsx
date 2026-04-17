@@ -54,9 +54,11 @@ export default function SearchBooks() {
   const debounceRef = useRef(null);
   const inputRef = useRef(null);
 
+  const [addedIsbns, setAddedIsbns] = useState(new Set());
   useEffect(() => {
     axios.get('/api/books').then(res => {
       setAddedBooks(new Set(res.data.map(b => b.googleBooksId).filter(Boolean)));
+      setAddedIsbns(new Set(res.data.map(b => b.isbn).filter(Boolean)));
     }).catch(() => {});
   }, []);
 
@@ -127,8 +129,15 @@ export default function SearchBooks() {
       setStatusMenu(null);
       const labels = { 'reading': 'Currently Reading', 'want-to-read': 'Want to Read', 'completed': 'Completed' };
       showToast(`"${book.title}" added to ${labels[status]}!`);
-    } catch {
-      showToast('Failed to add book');
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Failed to add book';
+      if (err.response?.status === 409) {
+        // Book already on shelf — mark it as added in UI
+        setAddedBooks(prev => new Set([...prev, book.googleBooksId]));
+        showToast(`"${book.title}" is already on your shelf`);
+      } else {
+        showToast(msg);
+      }
     } finally {
       setAddingId(null);
     }
@@ -192,7 +201,7 @@ export default function SearchBooks() {
           </div>
           <div className="search-book-grid">
             {results.map((book, i) => {
-              const isAdded = addedBooks.has(book.googleBooksId);
+              const isAdded = addedBooks.has(book.googleBooksId) || (book.isbn && addedIsbns.has(book.isbn));
               const isAdding = addingId === book.googleBooksId;
               return (
                 <div key={book.googleBooksId || i} className="search-book-card">
@@ -263,7 +272,7 @@ export default function SearchBooks() {
           </div>
           <div className="search-book-grid">
             {filterPopularBooks(activeGenre !== 'All Genres' ? activeGenre : null).map((book, i) => {
-              const isAdded = addedBooks.has(book.googleBooksId);
+              const isAdded = addedBooks.has(book.googleBooksId) || (book.isbn && addedIsbns.has(book.isbn));
               return (
                 <div key={book.googleBooksId} className="search-book-card">
                   <div style={{ overflow: 'hidden' }}>

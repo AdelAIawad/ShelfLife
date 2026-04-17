@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: shelflife
+    runtime: node
+    plan: free
+    buildCommand: npm install && cd client && npm install && npm run build
+    startCommand: node server/index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: MONGO_URI
+        sync: false  # Set manually in Render dashboard (your MongoDB Atlas URI)
+      - key: GOOGLE_BOOKS_API_KEY
+        sync: false  # Optional: set manually if you have one

@@ -1,4 +1,5 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
@@ -7,7 +8,11 @@ const bookRoutes = require('./routes/books');
 
 const app = express();
 
-app.use(cors());
+// CORS: allow configured frontend origin in production, allow all in dev
+const corsOptions = process.env.NODE_ENV === 'production' && process.env.FRONTEND_URL
+  ? { origin: process.env.FRONTEND_URL }
+  : {};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
@@ -16,6 +21,16 @@ app.use('/api/books', bookRoutes);
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+
+// Serve frontend static build in production (monolithic deploy)
+if (process.env.NODE_ENV === 'production') {
+  const clientDist = path.join(__dirname, '..', 'client', 'dist');
+  app.use(express.static(clientDist));
+  // SPA fallback: send index.html for non-API routes
+  app.get(/^(?!\/api).*/, (req, res) => {
+    res.sendFile(path.join(clientDist, 'index.html'));
+  });
+}
 
 // Auto-seed demo data when using in-memory DB
 async function seedDemoData() {
@@ -26,6 +41,16 @@ async function seedDemoData() {
   if (existingUsers > 0) return;
 
   console.log('Seeding demo data...');
+
+  // Create team member accounts (all start with empty shelves except Adel)
+  const teamMembers = [
+    { name: 'Shirley', email: 'shirley@shelflife.com', password: 'password123' },
+    { name: 'Carolyn', email: 'carolyn@shelflife.com', password: 'password123' },
+    { name: 'Xiaolei', email: 'xiaolei@shelflife.com', password: 'password123' },
+  ];
+  for (const member of teamMembers) {
+    await User.create(member);
+  }
 
   const user = await User.create({
     name: 'Adel Alawad',
@@ -61,7 +86,7 @@ async function seedDemoData() {
   console.log('  ================================');
 }
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.SERVER_PORT || process.env.PORT || 5000;
 
 connectDB().then(() => {
   seedDemoData().catch(console.error);

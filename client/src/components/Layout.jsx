@@ -2,11 +2,30 @@ import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import {
-  FiGrid, FiBook, FiSearch, FiLogOut, FiBell,
+  FiGrid, FiBook, FiSearch, FiLogOut, FiBell, FiHome,
   FiSettings, FiHelpCircle, FiChevronDown, FiX,
   FiAward, FiTrendingUp, FiStar, FiMail, FiBookOpen
 } from 'react-icons/fi';
 import { useState, useEffect, useRef } from 'react';
+
+function ShelfLifeLogo({ size = 22 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <defs>
+        <linearGradient id="logo-grad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#4A7CB5"/>
+          <stop offset="100%" stopColor="#C4854C"/>
+        </linearGradient>
+      </defs>
+      <path d="M4 2h16v20l-8-5-8 5V2z" stroke="url(#logo-grad)" strokeWidth="1.8" fill="none"/>
+      <circle cx="10" cy="9" r="1" fill="#4A7CB5"/>
+      <circle cx="14" cy="7" r="0.8" fill="#C4854C"/>
+      <circle cx="12" cy="12" r="0.6" fill="#6B7B95"/>
+      <line x1="10" y1="9" x2="14" y2="7" stroke="rgba(74,124,181,0.3)" strokeWidth="0.5"/>
+      <line x1="14" y1="7" x2="12" y2="12" stroke="rgba(196,133,76,0.3)" strokeWidth="0.5"/>
+    </svg>
+  );
+}
 
 function Modal({ open, onClose, title, children }) {
   if (!open) return null;
@@ -47,20 +66,20 @@ export default function Layout() {
       const reading = books.filter(b => b.status === 'reading');
 
       if (completed.length >= 5) {
-        notifs.push({ id: 'n1', icon: <FiAward />, title: 'Achievement Unlocked!', desc: `You've completed ${completed.length} books. Keep the momentum going!`, time: 'Just now', color: '#B8963C', read: false });
+        notifs.push({ id: 'n1', icon: <FiAward />, title: 'Achievement Unlocked!', desc: `You've completed ${completed.length} books. Keep the momentum going!`, time: 'Just now', color: '#C4854C', read: false });
       }
       if (reading.length > 0) {
         const closest = reading.sort((a, b) => (b.pagesRead / (b.pageCount || 1)) - (a.pagesRead / (a.pageCount || 1)))[0];
         const pct = closest.pageCount ? Math.round((closest.pagesRead / closest.pageCount) * 100) : 0;
         if (pct > 50) {
-          notifs.push({ id: 'n2', icon: <FiBookOpen />, title: 'Almost Done!', desc: `You're ${pct}% through "${closest.title}". Keep reading!`, time: 'Today', color: '#2E6B4F', read: false });
+          notifs.push({ id: 'n2', icon: <FiBookOpen />, title: 'Almost Done!', desc: `You're ${pct}% through "${closest.title}". Keep reading!`, time: 'Today', color: '#4A7CB5', read: false });
         }
       }
       const rated = completed.filter(b => b.rating >= 4);
       if (rated.length > 0) {
-        notifs.push({ id: 'n3', icon: <FiStar />, title: 'Top Rated', desc: `You've given ${rated.length} book${rated.length > 1 ? 's' : ''} a 4+ star rating.`, time: 'This week', color: '#8B5E3C', read: false });
+        notifs.push({ id: 'n3', icon: <FiStar />, title: 'Top Rated', desc: `You've given ${rated.length} book${rated.length > 1 ? 's' : ''} a 4+ star rating.`, time: 'This week', color: '#A0704A', read: false });
       }
-      notifs.push({ id: 'n4', icon: <FiTrendingUp />, title: 'Library Growing', desc: `Your shelf has ${books.length} books across ${new Set(books.flatMap(b => b.categories || [])).size} genres.`, time: 'Overview', color: '#2D4466', read: true });
+      notifs.push({ id: 'n4', icon: <FiTrendingUp />, title: 'Library Growing', desc: `Your shelf has ${books.length} books across ${new Set(books.flatMap(b => b.categories || [])).size} genres.`, time: 'Overview', color: '#3D6B9E', read: true });
 
       setNotifications(notifs);
     }).catch(() => {});
@@ -108,18 +127,21 @@ export default function Layout() {
       {/* ===== TOP NAV ===== */}
       <header className={`top-nav ${scrolled ? 'scrolled' : ''}`}>
         {/* Left: Brand */}
-        <NavLink to="/dashboard" className="top-nav-brand">
-          <span className="logo-icon">📖</span>
+        <NavLink to="/home" className="top-nav-brand">
+          <ShelfLifeLogo size={22} />
           <span className="brand-name">ShelfLife</span>
         </NavLink>
 
         {/* Center: Navigation */}
         <nav className="top-nav-links">
-          <NavLink to="/dashboard" className={({ isActive }) => isActive ? 'active' : ''}>
-            <FiGrid /> Dashboard
+          <NavLink to="/home" className={({ isActive }) => isActive ? 'active' : ''}>
+            <FiHome /> Home
           </NavLink>
           <NavLink to="/my-shelf" className={({ isActive }) => isActive ? 'active' : ''}>
             <FiBook /> My Shelf
+          </NavLink>
+          <NavLink to="/dashboard" className={({ isActive }) => isActive ? 'active' : ''}>
+            <FiGrid /> Insights
           </NavLink>
           <NavLink to="/search" className={({ isActive }) => isActive ? 'active' : ''}>
             <FiSearch /> Explore
@@ -190,8 +212,9 @@ export default function Layout() {
                 </div>
                 <div className="dropdown-divider" />
                 <div className="dropdown-body">
-                  <button className="dropdown-item" onClick={() => { setShowProfile(false); navigate('/my-shelf'); }}><FiBook /> My Collection</button>
-                  <button className="dropdown-item" onClick={() => { setShowProfile(false); navigate('/dashboard'); }}><FiTrendingUp /> Reading Stats</button>
+                  <button className="dropdown-item" onClick={() => { setShowProfile(false); navigate('/home'); }}><FiHome /> Home</button>
+                  <button className="dropdown-item" onClick={() => { setShowProfile(false); navigate('/my-shelf'); }}><FiBook /> My Shelf</button>
+                  <button className="dropdown-item" onClick={() => { setShowProfile(false); navigate('/dashboard'); }}><FiTrendingUp /> Reading Insights</button>
                   <button className="dropdown-item" onClick={() => { setShowProfile(false); setSettingsModal(true); }}><FiSettings /> Settings</button>
                   <button className="dropdown-item" onClick={() => { setShowProfile(false); setHelpModal(true); }}><FiHelpCircle /> Help & Support</button>
                 </div>
@@ -215,7 +238,7 @@ export default function Layout() {
         <div className="footer-shelf-edge" aria-hidden="true" />
         <div className="footer-inner">
           <div className="footer-brand">
-            <span>📖</span>
+            <ShelfLifeLogo size={18} />
             <span className="footer-brand-name">ShelfLife</span>
             <span className="footer-tagline">The Digital Archivist</span>
           </div>
@@ -248,7 +271,7 @@ export default function Layout() {
           <h4>Preferences</h4>
           <div className="settings-row"><span>Reading Goal</span><span className="settings-value">4 books / month</span></div>
           <div className="settings-row"><span>Notifications</span><span className="settings-value">Enabled</span></div>
-          <div className="settings-row"><span>Theme</span><span className="settings-value">Light</span></div>
+          <div className="settings-row"><span>Theme</span><span className="settings-value">Glass Dark</span></div>
         </div>
       </Modal>
 
@@ -263,7 +286,7 @@ export default function Layout() {
 
       <Modal open={aboutModal} onClose={() => setAboutModal(false)} title="About ShelfLife">
         <div className="about-content">
-          <div className="about-logo">📖</div>
+          <div className="about-logo"><ShelfLifeLogo size={36} /></div>
           <h2>ShelfLife</h2>
           <p className="about-tagline">The Digital Archivist</p>
           <p className="about-desc">A personal reading companion that helps you track your literary journey. Curate your library, discover new books, write reviews, and visualize your reading habits.</p>

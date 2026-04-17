@@ -5,7 +5,29 @@ import { Bar, Doughnut } from 'react-chartjs-2';
 import {
   Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend,
 } from 'chart.js';
-import { FiBook, FiFileText, FiStar, FiClock, FiArrowRight, FiSearch, FiPlus, FiTrendingUp, FiCalendar } from 'react-icons/fi';
+import {
+  FiBook, FiFileText, FiStar, FiClock, FiArrowRight,
+  FiTrendingUp, FiCalendar, FiAward, FiBookOpen, FiLayers, FiArchive,
+  FiZap, FiCompass, FiHexagon, FiEdit3
+} from 'react-icons/fi';
+
+const BADGE_ICONS = {
+  'book-open': FiBookOpen,
+  'layers': FiLayers,
+  'award': FiAward,
+  'archive': FiArchive,
+  'file-text': FiFileText,
+  'zap': FiZap,
+  'star': FiStar,
+  'compass': FiCompass,
+  'hexagon': FiHexagon,
+  'edit-3': FiEdit3,
+};
+
+function BadgeIcon({ name, size = 18 }) {
+  const Icon = BADGE_ICONS[name] || FiAward;
+  return <Icon size={size} />;
+}
 import HeroHeader from '../components/HeroHeader';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
@@ -48,25 +70,7 @@ function DashboardSkeleton() {
   );
 }
 
-// Recommendation generator based on user's reading patterns
-function getRecommendations(stats) {
-  const genres = (stats?.genreBreakdown || []).sort((a, b) => b.count - a.count);
-  const topGenre = genres[0]?.genre || 'Fiction';
-  const recs = [
-    { genre: 'Fiction', title: 'The Name of the Wind', author: 'Patrick Rothfuss', desc: 'A beautifully written epic fantasy about a legendary figure telling his own story.' },
-    { genre: 'Non-Fiction', title: 'Educated', author: 'Tara Westover', desc: 'A powerful memoir about growing up in a survivalist family and the transformative power of education.' },
-    { genre: 'Philosophy', title: 'The Republic', author: 'Plato', desc: 'The foundational text of Western philosophy exploring justice, the ideal state, and the nature of reality.' },
-    { genre: 'Psychology', title: 'Man\'s Search for Meaning', author: 'Viktor Frankl', desc: 'A psychiatrist\'s account of finding purpose in suffering, drawn from Holocaust survival.' },
-    { genre: 'Science Fiction', title: 'Foundation', author: 'Isaac Asimov', desc: 'A mathematician predicts the fall of a galactic empire and creates a plan to shorten the dark age.' },
-    { genre: 'Self-Help', title: 'The 7 Habits of Highly Effective People', author: 'Stephen Covey', desc: 'A principle-centered approach to personal and professional effectiveness.' },
-    { genre: 'History', title: 'Guns, Germs, and Steel', author: 'Jared Diamond', desc: 'Why did some civilizations advance faster? A sweeping answer spanning 13,000 years.' },
-    { genre: 'Classics', title: 'Crime and Punishment', author: 'Fyodor Dostoevsky', desc: 'The psychological torment of a young man who commits murder, believing himself above morality.' },
-  ];
-  // Return rec matching user's top genre, or random
-  return recs.find(r => r.genre === topGenre) || recs[0];
-}
-
-const CHART_COLORS = ['#2D4466', '#8B3A3A', '#6B4C6E', '#B8963C', '#2E6B4F', '#8B5E3C', '#4A6FA5', '#2A7B6F', '#9B4D4D', '#4A5568', '#7B6B3A', '#5A7E99', '#A07040'];
+const CHART_COLORS = ['#3D6B9E', '#9B4A5A', '#7B5E8E', '#C49A5C', '#4A8B8B', '#A0704A', '#5A8EC4', '#4A7CB5', '#8B6B55', '#5A6B82', '#7B9A5E', '#6B8BAA'];
 
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
@@ -87,12 +91,6 @@ export default function Dashboard() {
   // Chart data based on view toggle
   const monthlyData = stats?.monthlyData || [];
   const getChartData = () => {
-    if (chartView === 'W') {
-      // Weekly view: show last 4 weeks
-      const weeks = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
-      const lastMonth = monthlyData[monthlyData.length - 1]?.count || 0;
-      return { labels: weeks, data: [Math.floor(lastMonth * 0.2), Math.floor(lastMonth * 0.3), Math.ceil(lastMonth * 0.3), Math.ceil(lastMonth * 0.2)] };
-    }
     if (chartView === 'Y') {
       // Yearly view: aggregate by quarters
       const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
@@ -113,12 +111,12 @@ export default function Dashboard() {
     datasets: [{
       data: chartData.data,
       backgroundColor: chartData.data.map((v, i, arr) => {
-        if (v === 0) return 'rgba(45,68,102,0.06)';
-        if (i === arr.length - 1) return '#2D4466';
-        return 'rgba(45,68,102,0.3)';
+        if (v === 0) return 'rgba(74,124,181,0.06)';
+        if (i === arr.length - 1) return '#4A7CB5';
+        return 'rgba(74,124,181,0.3)';
       }),
       borderRadius: 4, barThickness: chartView === 'M' ? 20 : 32,
-      hoverBackgroundColor: '#3D5A80',
+      hoverBackgroundColor: '#5A9BD5',
     }],
   };
 
@@ -127,16 +125,16 @@ export default function Dashboard() {
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: '#fff', borderColor: '#E2DED6', borderWidth: 1,
-        titleColor: '#1A1A2E', bodyColor: '#1A1A2E',
+        backgroundColor: 'rgba(15, 22, 36, 0.9)', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
+        titleColor: '#E8ECF4', bodyColor: '#E8ECF4',
         titleFont: { family: 'Inter', size: 12 }, bodyFont: { family: 'Inter', size: 13, weight: '500' },
         padding: 12, cornerRadius: 8, displayColors: false,
         callbacks: { label: ctx => `${ctx.raw} book${ctx.raw !== 1 ? 's' : ''} completed` },
       },
     },
     scales: {
-      y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11, family: 'Inter' }, color: '#9CA3AF' }, grid: { color: 'rgba(0,0,0,0.04)', drawBorder: false }, border: { display: false } },
-      x: { ticks: { font: { size: 11, family: 'Inter' }, color: '#9CA3AF' }, grid: { display: false }, border: { display: false } },
+      y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11, family: 'Inter' }, color: '#6B7B95' }, grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false }, border: { display: false } },
+      x: { ticks: { font: { size: 11, family: 'Inter' }, color: '#6B7B95' }, grid: { display: false }, border: { display: false } },
     },
     animation: { duration: 600, easing: 'easeOutQuart' },
   };
@@ -146,7 +144,7 @@ export default function Dashboard() {
     datasets: [{
       data: (stats?.genreBreakdown || []).map(g => g.count),
       backgroundColor: CHART_COLORS.slice(0, (stats?.genreBreakdown || []).length),
-      borderWidth: 2, borderColor: '#FFFFFF', hoverOffset: 4,
+      borderWidth: 2, borderColor: 'rgba(15, 22, 36, 0.8)', hoverOffset: 4,
     }],
   };
 
@@ -161,8 +159,8 @@ export default function Dashboard() {
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: '#fff', borderColor: '#E2DED6', borderWidth: 1,
-        titleColor: '#1A1A2E', bodyColor: '#1A1A2E',
+        backgroundColor: 'rgba(15, 22, 36, 0.9)', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
+        titleColor: '#E8ECF4', bodyColor: '#E8ECF4',
         padding: 12, cornerRadius: 8,
         titleFont: { family: 'Inter' }, bodyFont: { family: 'Inter', weight: '500' },
       },
@@ -171,7 +169,6 @@ export default function Dashboard() {
   };
 
   const totalGenres = (stats?.genreBreakdown || []).reduce((s, g) => s + g.count, 0);
-  const recommendation = getRecommendations(stats);
 
   // Reading streak (based on books with recent updates)
   const currentlyReading = stats?.currentlyReading || [];
@@ -181,7 +178,11 @@ export default function Dashboard() {
 
   return (
     <>
-      <HeroHeader title="Reading Insights" subtitle={`An overview of your literary journey through ${new Date().getFullYear()}.`} variant="dashboard" />
+      <HeroHeader
+        title={`Your ${new Date().getFullYear()} in Books`}
+        subtitle="A look at your reading patterns, achievements, and the stories that shaped your year."
+        variant="dashboard"
+      />
 
       {/* Stats Cards */}
       <div className="stats-grid">
@@ -223,13 +224,69 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* Achievements */}
+      {(stats?.achievements || []).length > 0 && (
+        <div style={{ padding: '0 var(--sp-xl)', marginBottom: 'var(--sp-2xl)' }}>
+          <div className="section-header" style={{ marginBottom: 12 }}>
+            <h3 style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiAward /> Achievements</h3>
+            {stats?.readingStreak > 0 && (
+              <span style={{ fontSize: 12, color: 'var(--brand-accent)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 5 }}>
+                <FiZap size={13} /> {stats.readingStreak} month streak
+              </span>
+            )}
+          </div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            {(stats?.achievements || []).map(badge => (
+              <div key={badge.id + (badge.earned ? '-earned' : '-locked')} style={{
+                display: 'flex', alignItems: 'center', gap: 10,
+                padding: '10px 16px',
+                background: badge.earned ? 'var(--glass-bg)' : 'var(--glass-bg-light)',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
+                border: badge.earned ? '1px solid var(--border-glass)' : '1px solid var(--border-light)',
+                borderRadius: 'var(--r-lg)',
+                opacity: badge.earned ? 1 : 0.5,
+                transition: 'all 0.25s ease',
+                position: 'relative',
+                overflow: 'hidden',
+                boxShadow: badge.earned ? 'var(--glass-highlight)' : 'none',
+              }}>
+                {!badge.earned && badge.progress != null && (
+                  <div style={{
+                    position: 'absolute', bottom: 0, left: 0,
+                    height: 3, width: `${Math.min(badge.progress * 100, 100)}%`,
+                    background: 'var(--gradient-brand)',
+                    borderRadius: 2,
+                  }} />
+                )}
+                <div style={{
+                  width: 34, height: 34, borderRadius: 'var(--r-md)',
+                  background: badge.earned ? 'rgba(74,124,181,0.12)' : 'rgba(74,124,181,0.06)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: badge.earned ? 'var(--clr-sapphire)' : 'var(--text-faint)',
+                  flexShrink: 0,
+                }}>
+                  <BadgeIcon name={badge.icon} size={16} />
+                </div>
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: badge.earned ? 'var(--text-primary)' : 'var(--text-muted)', lineHeight: 1.3 }}>
+                    {badge.title}
+                  </div>
+                  <div style={{ fontSize: 10, color: 'var(--text-muted)', lineHeight: 1.3 }}>{badge.desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Charts */}
       <div className="charts-row">
         <div className="chart-card">
           <h3>
             Activity Timeline
             <div className="chart-toggle">
-              {['W', 'M', 'Y'].map(v => (
+              {['M', 'Y'].map(v => (
                 <button key={v} className={chartView === v ? 'active' : ''} onClick={() => setChartView(v)}>{v}</button>
               ))}
             </div>
@@ -271,72 +328,59 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Bottom Section */}
-      <div className="dashboard-bottom">
-        <div>
-          <div className="section-header">
-            <h3>Currently Reading</h3>
-            <Link to="/my-shelf">View All <FiArrowRight style={{ fontSize: 12 }} /></Link>
-          </div>
-          {currentlyReading.length === 0 ? (
-            <div className="empty-state">
-              <FiBook style={{ fontSize: 28 }} />
-              <h3>No books in progress</h3>
-              <p>Start reading something from your shelf!</p>
-              <Link to="/search" className="btn-hero-action" style={{ display: 'inline-flex', marginTop: 8, fontSize: 13 }}>
-                <FiSearch /> Find Books
-              </Link>
-            </div>
-          ) : (
-            currentlyReading.slice(0, 3).map((book) => {
-              const progress = book.pageCount ? Math.round((book.pagesRead / book.pageCount) * 100) : 0;
-              return (
-                <Link to={`/book/${book._id}`} key={book._id} className="reading-card">
-                  {book.thumbnail ? (
-                    <img src={book.thumbnail} alt={book.title} />
-                  ) : (
-                    <div className="reading-card-placeholder" />
-                  )}
-                  <div className="reading-card-info">
-                    <h4>{book.title}</h4>
-                    <p>{book.authors?.join(', ')}</p>
-                    <div className="progress-bar-wrapper">
-                      <div className="progress-bar">
-                        <div className="progress-bar-fill" style={{ width: `${progress}%` }} />
-                      </div>
-                      <div className="progress-text">Page {book.pagesRead} of {book.pageCount}</div>
-                    </div>
-                  </div>
+      {/* Top Authors & Best Book */}
+      {stats?.totalBooksRead > 0 && (
+        <div style={{ padding: '0 var(--sp-xl)', marginBottom: 'var(--sp-2xl)' }}>
+          <div className="dashboard-summary-grid">
+            {/* Top rated book */}
+            <div className="summary-card">
+              <div className="summary-card-label"><FiStar /> Top Rated This Year</div>
+              {(() => {
+                const topBook = [...(stats.currentlyReading || []), ...(stats.completed || [])]
+                  .concat(stats.topRatedBook ? [stats.topRatedBook] : []);
+                return null;
+              })()}
+              <div className="summary-card-content">
+                <h4>See your reviews</h4>
+                <p>Head to My Shelf to revisit your highest-rated reads</p>
+                <Link to="/my-shelf" className="summary-card-link">
+                  Browse completed <FiArrowRight />
                 </Link>
-              );
-            })
-          )}
-        </div>
+              </div>
+            </div>
 
-        <div>
-          <div className="section-header">
-            <h3>Recommended for You</h3>
-          </div>
-          <div className="reco-card">
-            <div className="reco-label">Based on your {recommendation.genre} reading</div>
-            <h4>{recommendation.title}</h4>
-            <p className="reco-author">by {recommendation.author}</p>
-            <div className="reco-desc">{recommendation.desc}</div>
-            <button className="btn-teal-sm" onClick={async () => {
-              try {
-                await axios.post('/api/books', {
-                  title: recommendation.title, authors: [recommendation.author],
-                  categories: [recommendation.genre], status: 'want-to-read', pageCount: 300,
-                });
-                setToast(`"${recommendation.title}" added to your shelf!`);
-              } catch { setToast('Already on your shelf!'); }
-              setTimeout(() => setToast(''), 3000);
-            }}>
-              <FiPlus /> Add to Shelf
-            </button>
+            {/* Reading pace */}
+            <div className="summary-card">
+              <div className="summary-card-label"><FiClock /> Your Reading Pace</div>
+              <div className="summary-card-content">
+                <div className="summary-big-number">
+                  {stats.totalBooksRead > 0
+                    ? Math.round((stats.totalPagesRead || 0) / stats.totalBooksRead)
+                    : 0}
+                  <span>pages</span>
+                </div>
+                <p>per book on average · about {stats.avgReadTime || '0h'} reading time</p>
+              </div>
+            </div>
+
+            {/* Genre diversity */}
+            <div className="summary-card">
+              <div className="summary-card-label"><FiTrendingUp /> Genre Diversity</div>
+              <div className="summary-card-content">
+                <div className="summary-big-number">
+                  {(stats.genreBreakdown || []).length}
+                  <span>genres</span>
+                </div>
+                <p>
+                  {(stats.genreBreakdown || []).length >= 5
+                    ? 'You\'re an eclectic reader'
+                    : 'Explore a new genre to expand'}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {toast && <div className="toast">{toast}</div>}
     </>

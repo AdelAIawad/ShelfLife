@@ -158,8 +158,8 @@ export default function RateReview() {
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: 6,
             padding: '5px 14px', borderRadius: 'var(--r-full)',
-            background: book.status === 'completed' ? 'rgba(46,204,113,0.1)' : 'var(--teal-soft)',
-            color: book.status === 'completed' ? '#2ecc71' : 'var(--teal)',
+            background: book.status === 'completed' ? 'rgba(74,173,170,0.12)' : 'rgba(74,124,181,0.12)',
+            color: book.status === 'completed' ? '#4AADAA' : '#4A7CB5',
             fontSize: '0.75rem', fontWeight: 600, marginBottom: 24,
             textTransform: 'uppercase', letterSpacing: '1px',
           }}>
@@ -218,12 +218,12 @@ export default function RateReview() {
                 value={pagesRead}
                 onChange={e => setPagesRead(Number(e.target.value))}
                 style={{
-                  flex: 1, accentColor: 'var(--teal)',
+                  flex: 1, accentColor: '#4A7CB5',
                   cursor: 'pointer',
                 }}
               />
               <span style={{
-                fontSize: '0.85rem', fontWeight: 700, color: 'var(--text)',
+                fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)',
                 fontVariantNumeric: 'tabular-nums', minWidth: 80, textAlign: 'right',
               }}>
                 {pagesRead} / {book.pageCount || '?'}

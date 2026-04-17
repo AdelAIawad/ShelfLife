@@ -1,6 +1,25 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { FiArrowRight, FiBookOpen, FiBook, FiStar, FiTrendingUp, FiX, FiMail } from 'react-icons/fi';
+import { FiArrowRight, FiBook, FiStar, FiTrendingUp } from 'react-icons/fi';
+
+function ShelfLifeLogo({ size = 22 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <defs>
+        <linearGradient id="login-logo-grad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#4A7CB5"/>
+          <stop offset="100%" stopColor="#C4854C"/>
+        </linearGradient>
+      </defs>
+      <path d="M4 2h16v20l-8-5-8 5V2z" stroke="url(#login-logo-grad)" strokeWidth="1.8" fill="none"/>
+      <circle cx="10" cy="9" r="1" fill="#4A7CB5"/>
+      <circle cx="14" cy="7" r="0.8" fill="#C4854C"/>
+      <circle cx="12" cy="12" r="0.6" fill="#6B7B95"/>
+      <line x1="10" y1="9" x2="14" y2="7" stroke="rgba(74,124,181,0.3)" strokeWidth="0.5"/>
+      <line x1="14" y1="7" x2="12" y2="12" stroke="rgba(196,133,76,0.3)" strokeWidth="0.5"/>
+    </svg>
+  );
+}
 
 const QUOTES = [
   { text: 'A reader lives a thousand lives before he dies.', author: 'George R.R. Martin' },
@@ -42,12 +61,8 @@ export default function Login() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [keepSession, setKeepSession] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showForgot, setShowForgot] = useState(false);
-  const [forgotEmail, setForgotEmail] = useState('');
-  const [forgotSent, setForgotSent] = useState(false);
   const [quote] = useState(() => QUOTES[Math.floor(Math.random() * QUOTES.length)]);
   const cardRef = useRef(null);
 
@@ -101,7 +116,7 @@ export default function Login() {
       <div className="login-left">
         <div className="login-left-content">
           <h1 className="login-hero-title">
-            <span className="login-logo-icon">📖</span>
+            <ShelfLifeLogo size={30} />
             ShelfLife
           </h1>
           <p className="login-hero-sub">The Digital Archivist</p>
@@ -163,17 +178,10 @@ export default function Login() {
             <div className="form-group">
               <label>
                 Password
-                {!isRegister && <button type="button" onClick={() => setShowForgot(true)} style={{ all: 'unset', cursor: 'pointer', fontSize: '12px', color: 'var(--clr-emerald)', fontWeight: 500 }}>Forgot?</button>}
               </label>
               <input type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} autoComplete={isRegister ? 'new-password' : 'current-password'} />
             </div>
 
-            {!isRegister && (
-              <div className="checkbox-group">
-                <input type="checkbox" id="keepSession" checked={keepSession} onChange={e => setKeepSession(e.target.checked)} />
-                <label htmlFor="keepSession">Keep my archive session active</label>
-              </div>
-            )}
 
             <button type="submit" className="btn-primary" disabled={loading}>
               {loading ? (
@@ -195,54 +203,9 @@ export default function Login() {
             {isRegister ? 'Sign In Instead' : 'Create an Account'}
           </button>
 
-          {!isRegister && (
-            <button className="btn-outline" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
-              onClick={() => setError('Google Sign-In will be available soon. Please use email registration for now.')}>
-              <FiBookOpen /> Sign Up With Google
-            </button>
-          )}
         </div>
       </div>
 
-      {/* Forgot Password Modal */}
-      {showForgot && (
-        <div className="modal-overlay" onClick={() => { setShowForgot(false); setForgotSent(false); }}>
-          <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: 400 }}>
-            <div className="modal-header">
-              <h3>Reset Password</h3>
-              <button className="modal-close" onClick={() => { setShowForgot(false); setForgotSent(false); }}><FiX /></button>
-            </div>
-            <div className="modal-body">
-              {forgotSent ? (
-                <div style={{ textAlign: 'center', padding: '20px 0' }}>
-                  <FiMail style={{ fontSize: '2.5rem', color: 'var(--teal)', marginBottom: 16 }} />
-                  <h4 style={{ marginBottom: 8 }}>Check Your Email</h4>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5 }}>
-                    If an account exists for <strong>{forgotEmail}</strong>, we've sent password reset instructions.
-                  </p>
-                  <button className="btn-primary" style={{ marginTop: 20 }} onClick={() => { setShowForgot(false); setForgotSent(false); }}>
-                    Back to Login
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: 20, lineHeight: 1.5 }}>
-                    Enter your email address and we'll send you instructions to reset your password.
-                  </p>
-                  <div className="form-group">
-                    <label>Email Address</label>
-                    <input type="email" placeholder="curator@shelflife.com" value={forgotEmail}
-                      onChange={e => setForgotEmail(e.target.value)} autoFocus />
-                  </div>
-                  <button className="btn-primary" onClick={() => { if (forgotEmail.trim()) setForgotSent(true); }}>
-                    Send Reset Link <FiArrowRight />
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
