@@ -1,6 +1,6 @@
 # ShelfLife — The Digital Archivist
 
-A full-stack personal reading companion. Track what you're reading, remember why you liked each book, see your reading patterns, and discover your next read — all wrapped in a glassmorphism UI inspired by Apple Music and Spotify.
+A full-stack personal reading companion with a modern glassmorphism interface. Track what you're reading, remember why you liked each book, see your reading patterns over time, and discover your next read.
 
 ![Tech Stack](https://img.shields.io/badge/Stack-React%2018%20%2B%20Node.js%20%2B%20MongoDB-4A7CB5)
 

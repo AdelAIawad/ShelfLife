@@ -147,6 +147,14 @@ router.get('/stats', auth, async (req, res) => {
     const avgPagesPerBook = totalBooksRead > 0 ? totalPagesRead / totalBooksRead : 0;
     const avgReadTimeHours = Math.round(avgPagesPerBook / 40);
 
+    // Top-rated book (highest rating, tiebreaker = most recently completed)
+    const topRatedBook = ratedBooks.length > 0
+      ? [...ratedBooks].sort((a, b) => {
+          if (b.rating !== a.rating) return b.rating - a.rating;
+          return new Date(b.dateCompleted || 0) - new Date(a.dateCompleted || 0);
+        })[0]
+      : null;
+
     res.json({
       totalBooksRead,
       totalPagesRead,
@@ -159,6 +167,15 @@ router.get('/stats', auth, async (req, res) => {
       readingStreak: streak,
       totalBooks: books.length,
       totalReviews: reviewedBooks.length,
+      topRatedBook: topRatedBook ? {
+        _id: topRatedBook._id,
+        title: topRatedBook.title,
+        authors: topRatedBook.authors,
+        thumbnail: topRatedBook.thumbnail,
+        rating: topRatedBook.rating,
+        review: topRatedBook.review,
+        dateCompleted: topRatedBook.dateCompleted,
+      } : null,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

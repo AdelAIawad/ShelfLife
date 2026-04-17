@@ -333,21 +333,39 @@ export default function Dashboard() {
         <div style={{ padding: '0 var(--sp-xl)', marginBottom: 'var(--sp-2xl)' }}>
           <div className="dashboard-summary-grid">
             {/* Top rated book */}
-            <div className="summary-card">
-              <div className="summary-card-label"><FiStar /> Top Rated This Year</div>
-              {(() => {
-                const topBook = [...(stats.currentlyReading || []), ...(stats.completed || [])]
-                  .concat(stats.topRatedBook ? [stats.topRatedBook] : []);
-                return null;
-              })()}
-              <div className="summary-card-content">
-                <h4>See your reviews</h4>
-                <p>Head to My Shelf to revisit your highest-rated reads</p>
-                <Link to="/my-shelf" className="summary-card-link">
-                  Browse completed <FiArrowRight />
-                </Link>
-              </div>
-            </div>
+            <Link
+              to={stats.topRatedBook ? `/book/${stats.topRatedBook._id}` : '/my-shelf'}
+              className="summary-card summary-card--top-rated"
+              style={{ display: 'block', textDecoration: 'none' }}
+            >
+              <div className="summary-card-label"><FiStar /> Your Top Rated</div>
+              {stats.topRatedBook ? (
+                <div className="top-rated-content">
+                  {stats.topRatedBook.thumbnail ? (
+                    <img src={stats.topRatedBook.thumbnail} alt={stats.topRatedBook.title} className="top-rated-cover" />
+                  ) : (
+                    <div className="top-rated-cover no-cover">{stats.topRatedBook.title}</div>
+                  )}
+                  <div className="top-rated-info">
+                    <div className="top-rated-stars">
+                      {Array.from({ length: stats.topRatedBook.rating }).map((_, i) => (
+                        <FiStar key={i} style={{ fill: 'var(--brand-accent)', color: 'var(--brand-accent)' }} size={14} />
+                      ))}
+                    </div>
+                    <h4 className="top-rated-title">{stats.topRatedBook.title}</h4>
+                    <p className="top-rated-author">by {stats.topRatedBook.authors?.join(', ')}</p>
+                    {stats.topRatedBook.review && (
+                      <p className="top-rated-review">&ldquo;{stats.topRatedBook.review}&rdquo;</p>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="summary-card-content">
+                  <h4>No rated books yet</h4>
+                  <p>Finish a book and give it a rating to see it here.</p>
+                </div>
+              )}
+            </Link>
 
             {/* Reading pace */}
             <div className="summary-card">
