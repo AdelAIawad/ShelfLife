@@ -119,7 +119,7 @@ export default function Login() {
             <ShelfLifeLogo size={30} />
             ShelfLife
           </h1>
-          <p className="login-hero-sub">The Digital Archivist</p>
+          <p className="login-hero-sub">For the reflective reader</p>
 
           <div className="login-hero-quote">
             <p>"{quote.text}"</p>

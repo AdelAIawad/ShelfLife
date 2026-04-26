@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import Layout from './components/Layout';
 import Login from './pages/Login';
@@ -7,11 +7,27 @@ import Dashboard from './pages/Dashboard';
 import MyShelf from './pages/MyShelf';
 import SearchBooks from './pages/SearchBooks';
 import RateReview from './pages/RateReview';
+import Onboarding from './pages/Onboarding';
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
+  const location = useLocation();
   if (loading) return <div className="loading-screen">Loading...</div>;
-  return user ? children : <Navigate to="/login" />;
+  if (!user) return <Navigate to="/login" replace />;
+  // Force new users through onboarding before accessing the app
+  if (user.onboardingComplete === false && location.pathname !== '/onboarding') {
+    return <Navigate to="/onboarding" replace />;
+  }
+  return children;
+}
+
+function OnboardingRoute({ children }) {
+  const { user, loading } = useAuth();
+  if (loading) return <div className="loading-screen">Loading...</div>;
+  if (!user) return <Navigate to="/login" replace />;
+  // Already completed — don't let them re-enter the wizard
+  if (user.onboardingComplete) return <Navigate to="/home" replace />;
+  return children;
 }
 
 export default function App() {
@@ -22,6 +38,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={user ? <Navigate to="/home" /> : <Login />} />
+      <Route path="/onboarding" element={<OnboardingRoute><Onboarding /></OnboardingRoute>} />
       <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}>
         <Route index element={<Navigate to="/home" />} />
         <Route path="home" element={<Home />} />

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { FiPlus, FiChevronLeft, FiChevronRight, FiBook, FiBookOpen, FiTrash2, FiAlertTriangle, FiGrid, FiList } from 'react-icons/fi';
+import { FiPlus, FiChevronLeft, FiChevronRight, FiBook, FiBookOpen, FiTrash2, FiAlertTriangle, FiGrid, FiList, FiStar } from 'react-icons/fi';
 import HeroHeader from '../components/HeroHeader';
 
 function ConfirmModal({ open, title, message, onConfirm, onCancel, danger }) {
@@ -189,6 +189,18 @@ export default function MyShelf() {
                   <div className="book-card-info">
                     <h4>{book.title}</h4>
                     <p>{book.authors?.join(', ')}</p>
+                    {book.status === 'completed' && (
+                      <div className="book-card-rating" aria-label={book.rating > 0 ? `${book.rating} out of 5 stars` : 'Not yet rated'}>
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <FiStar
+                            key={i}
+                            size={12}
+                            className={i < (book.rating || 0) ? 'star-filled' : 'star-empty'}
+                          />
+                        ))}
+                        {!book.rating && <span className="book-card-rating-empty">Not rated</span>}
+                      </div>
+                    )}
                   </div>
                   {book.status === 'reading' && (
                     <div className="progress-bar-wrapper" style={{ padding: '0 2px 4px' }}>

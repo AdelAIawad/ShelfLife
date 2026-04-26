@@ -38,9 +38,12 @@ const ALL_RECS = [
   { genre: 'Mystery', title: 'Gone Girl', author: 'Gillian Flynn', desc: 'A gripping psychological thriller about a marriage gone terrifyingly wrong.', pageCount: 419 },
 ];
 
-function getMultipleRecommendations(stats, shelfTitles = [], count = 5) {
-  const genres = (stats?.genreBreakdown || []).sort((a, b) => b.count - a.count);
-  const topGenres = genres.slice(0, 4).map(g => g.genre);
+function getMultipleRecommendations(stats, shelfTitles = [], count = 5, userGenres = []) {
+  // Prefer user's declared onboarding genres first, then observed shelf genres
+  const observed = (stats?.genreBreakdown || [])
+    .sort((a, b) => b.count - a.count)
+    .map(g => g.genre);
+  const topGenres = [...userGenres, ...observed.filter(g => !userGenres.includes(g))].slice(0, 6);
   if (topGenres.length === 0) topGenres.push('Fiction', 'Non-Fiction');
 
   const available = ALL_RECS.filter(r => !shelfTitles.includes(r.title.toLowerCase()));
@@ -169,7 +172,7 @@ export default function Home() {
       setBooks(booksRes.data);
       setStats(statsRes.data);
       const titles = booksRes.data.map(b => b.title.toLowerCase());
-      setRecommendations(getMultipleRecommendations(statsRes.data, titles, 6));
+      setRecommendations(getMultipleRecommendations(statsRes.data, titles, 6, user?.genres || []));
     }).catch(console.error)
       .finally(() => setLoading(false));
   };
@@ -216,7 +219,7 @@ export default function Home() {
     : null;
 
   const otherReading = featured ? reading.filter(b => b._id !== featured._id) : reading;
-  const yearlyGoal = 20;
+  const yearlyGoal = user?.yearlyGoal || 12;
   const completedThisYear = completed.filter(b => {
     const d = b.dateCompleted ? new Date(b.dateCompleted) : null;
     return d && d.getFullYear() === new Date().getFullYear();
@@ -339,7 +342,7 @@ export default function Home() {
               className="home-section-link"
               onClick={() => {
                 const titles = books.map(b => b.title.toLowerCase());
-                setRecommendations(getMultipleRecommendations(stats, titles, 6));
+                setRecommendations(getMultipleRecommendations(stats, titles, 6, user?.genres || []));
                 showToast('New recommendations loaded');
               }}
             >

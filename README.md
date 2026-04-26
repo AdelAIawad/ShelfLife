@@ -1,6 +1,9 @@
 # ShelfLife — The Digital Archivist
 
-A full-stack personal reading companion with a modern glassmorphism interface. Track what you're reading, remember why you liked each book, see your reading patterns over time, and discover your next read.
+**A reading companion for the reflective reader.** Built for people in their 20s–40s who treat each book as a conversation worth remembering — not just a title to check off. Track what you're reading, capture *why* each book mattered, watch your habits take shape over time, and get recommendations tuned to what you actually love.
+
+> **Persona — "Maya, 28, the reflective reader"**
+> Reads ~15 books a year across fiction and non-fiction. Wants to remember why she loved each one and watch her tastes evolve. Finds Goodreads cluttered and StoryGraph overwhelming. Wants a calm, beautiful place that respects her reading life — dark theme by day, light theme on the train.
 
 ![Tech Stack](https://img.shields.io/badge/Stack-React%2018%20%2B%20Node.js%20%2B%20MongoDB-4A7CB5)
 
@@ -141,7 +144,19 @@ All book routes use a field whitelist — arbitrary body fields are ignored.
 ### Prerequisites
 - **Node.js** v18+ ([download](https://nodejs.org/))
 - **npm** v9+ (included with Node)
-- **MongoDB** — optional (app auto-starts an in-memory MongoDB if no URI is set)
+- **MongoDB** — *optional* (see "In-memory MongoDB" below)
+
+#### In-memory MongoDB (the dev story)
+
+ShelfLife uses [`mongodb-memory-server`](https://github.com/typegoose/mongodb-memory-server) so the app runs with **zero external dependencies** during development:
+
+1. On first run, the package downloads a small MongoDB binary into your project (one-time, cached).
+2. Each time the server starts, that binary boots a real MongoDB instance **inside RAM**.
+3. The server connects to it like any normal MongoDB.
+4. Demo data auto-seeds on first connect.
+5. When the process exits, the in-memory database disappears — clean slate every restart.
+
+**Why use this?** Anyone can clone the repo and run `npm run dev` without installing MongoDB. Great for demos, CI, and onboarding new contributors. **For production** (Render, Heroku, etc.), set `MONGO_URI` to a real MongoDB Atlas connection string and the in-memory layer is bypassed automatically — no code change needed.
 
 ### Installation
 

@@ -1,10 +1,12 @@
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import {
   FiGrid, FiBook, FiSearch, FiLogOut, FiBell, FiHome,
   FiSettings, FiHelpCircle, FiChevronDown, FiX,
-  FiAward, FiTrendingUp, FiStar, FiMail, FiBookOpen
+  FiAward, FiTrendingUp, FiStar, FiMail, FiBookOpen,
+  FiSun, FiMoon, FiMenu
 } from 'react-icons/fi';
 import { useState, useEffect, useRef } from 'react';
 
@@ -50,12 +52,14 @@ const QUOTES = [
 
 export default function Layout() {
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   // Generate dynamic notifications from actual book data
   useEffect(() => {
@@ -112,6 +116,7 @@ export default function Layout() {
   useEffect(() => {
     setShowProfile(false);
     setShowNotifications(false);
+    setMobileNavOpen(false);
   }, [location.pathname]);
 
   const handleLogout = () => { logout(); navigate('/login'); };
@@ -126,6 +131,16 @@ export default function Layout() {
     <div className="app-layout">
       {/* ===== TOP NAV ===== */}
       <header className={`top-nav ${scrolled ? 'scrolled' : ''}`}>
+        {/* Mobile hamburger (only visible <768px) */}
+        <button
+          className="nav-mobile-toggle"
+          onClick={() => setMobileNavOpen(!mobileNavOpen)}
+          aria-label="Toggle navigation"
+          aria-expanded={mobileNavOpen}
+        >
+          {mobileNavOpen ? <FiX /> : <FiMenu />}
+        </button>
+
         {/* Left: Brand */}
         <NavLink to="/home" className="top-nav-brand">
           <ShelfLifeLogo size={22} />
@@ -133,7 +148,7 @@ export default function Layout() {
         </NavLink>
 
         {/* Center: Navigation */}
-        <nav className="top-nav-links">
+        <nav className={`top-nav-links ${mobileNavOpen ? 'mobile-open' : ''}`}>
           <NavLink to="/home" className={({ isActive }) => isActive ? 'active' : ''}>
             <FiHome /> Home
           </NavLink>
@@ -159,6 +174,16 @@ export default function Layout() {
               }
             }} />
           </div>
+
+          {/* Theme toggle */}
+          <button
+            className="nav-icon-btn theme-toggle"
+            onClick={toggleTheme}
+            aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
+            title={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
+          >
+            {theme === 'light' ? <FiMoon /> : <FiSun />}
+          </button>
 
           {/* Notifications */}
           <div className="dropdown-wrapper" ref={notifRef}>
@@ -269,9 +294,18 @@ export default function Layout() {
         </div>
         <div className="settings-section">
           <h4>Preferences</h4>
-          <div className="settings-row"><span>Reading Goal</span><span className="settings-value">4 books / month</span></div>
+          <div className="settings-row">
+            <span>Reading Goal</span>
+            <span className="settings-value">{user?.yearlyGoal || 12} books / year</span>
+          </div>
           <div className="settings-row"><span>Notifications</span><span className="settings-value">Enabled</span></div>
-          <div className="settings-row"><span>Theme</span><span className="settings-value">Glass Dark</span></div>
+          <div className="settings-row">
+            <span>Theme</span>
+            <button className="settings-theme-toggle" onClick={toggleTheme}>
+              {theme === 'light' ? <><FiSun /> Light</> : <><FiMoon /> Dark</>}
+              <span className="settings-theme-hint">click to switch</span>
+            </button>
+          </div>
         </div>
       </Modal>
 

@@ -32,21 +32,42 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// GET /api/books/search - Search Google Books API
+// Open Library fallback — no key, no rate limits. Used when Google Books is unavailable.
+async function searchOpenLibrary(query, maxResults) {
+  const url = `https://openlibrary.org/search.json?q=${encodeURIComponent(query)}&limit=${maxResults}&fields=key,title,author_name,cover_i,isbn,number_of_pages_median,subject,first_publish_year,publisher`;
+  const response = await axios.get(url, { timeout: 8000 });
+  return (response.data.docs || []).map(doc => ({
+    googleBooksId: `ol-${(doc.key || '').replace('/works/', '')}`, // prefix distinguishes from real Google IDs
+    title: doc.title || 'Unknown Title',
+    authors: doc.author_name || ['Unknown Author'],
+    description: '',
+    thumbnail: doc.cover_i
+      ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg`
+      : '',
+    pageCount: doc.number_of_pages_median || 0,
+    categories: (doc.subject || []).slice(0, 3),
+    isbn: (doc.isbn || [])[0] || '',
+    publishedDate: doc.first_publish_year ? String(doc.first_publish_year) : '',
+    publisher: (doc.publisher || [])[0] || '',
+  }));
+}
+
+// GET /api/books/search - Search Google Books API with Open Library fallback
 // IMPORTANT: This must be ABOVE /:id to avoid "search" being treated as an ObjectId
 router.get('/search', auth, async (req, res) => {
-  try {
-    const { q, category, maxResults = 12 } = req.query;
-    if (!q && !category) {
-      return res.status(400).json({ message: 'Search query required' });
-    }
-    let searchQuery = q || '';
-    if (category) searchQuery += `+subject:${category}`;
+  const { q, category, maxResults = 12 } = req.query;
+  if (!q && !category) {
+    return res.status(400).json({ message: 'Search query required' });
+  }
+  let searchQuery = q || '';
+  if (category) searchQuery += `+subject:${category}`;
 
+  // Try Google Books first (richer data when it works)
+  try {
     const apiKey = process.env.GOOGLE_BOOKS_API_KEY;
     const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(searchQuery)}&maxResults=${maxResults}${apiKey ? `&key=${apiKey}` : ''}`;
 
-    const response = await axios.get(url);
+    const response = await axios.get(url, { timeout: 8000 });
     const books = (response.data.items || []).map(item => ({
       googleBooksId: item.id,
       title: item.volumeInfo.title || 'Unknown Title',
@@ -60,12 +81,20 @@ router.get('/search', auth, async (req, res) => {
       publisher: item.volumeInfo.publisher || '',
     }));
 
-    res.json(books);
+    if (books.length > 0) return res.json(books);
+    // Google returned 0 results → try Open Library as secondary source
   } catch (error) {
-    if (error.response?.status === 429) {
-      return res.status(429).json({ message: 'Google Books API rate limit reached. Try again later or browse popular books below.' });
-    }
-    res.status(500).json({ message: 'Failed to search books. Please try again.' });
+    console.warn(`[search] Google Books failed (${error.response?.status || error.code || 'unknown'}), falling back to Open Library`);
+    // fall through to Open Library
+  }
+
+  // Fallback: Open Library (no key, no quota)
+  try {
+    const olBooks = await searchOpenLibrary(q || category, maxResults);
+    return res.json(olBooks);
+  } catch (error) {
+    console.error('[search] Open Library also failed:', error.message);
+    return res.status(503).json({ message: 'Book search is temporarily unavailable. Try again in a moment.' });
   }
 });
 

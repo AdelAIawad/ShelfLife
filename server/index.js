@@ -42,11 +42,12 @@ async function seedDemoData() {
 
   console.log('Seeding demo data...');
 
-  // Create team member accounts (all start with empty shelves except Adel)
+  // Create team member accounts (all start with empty shelves except Adel).
+  // Demo accounts are pre-onboarded so they skip the wizard at login.
   const teamMembers = [
-    { name: 'Shirley', email: 'shirley@shelflife.com', password: 'password123' },
-    { name: 'Carolyn', email: 'carolyn@shelflife.com', password: 'password123' },
-    { name: 'Xiaolei', email: 'xiaolei@shelflife.com', password: 'password123' },
+    { name: 'Shirley',  email: 'shirley@shelflife.com',  password: 'password123', genres: ['Fiction', 'Mystery'],        yearlyGoal: 12, motivation: 'escape',     onboardingComplete: true },
+    { name: 'Carolyn',  email: 'carolyn@shelflife.com',  password: 'password123', genres: ['Non-Fiction', 'Biography'],  yearlyGoal: 12, motivation: 'understand', onboardingComplete: true },
+    { name: 'Xiaolei',  email: 'xiaolei@shelflife.com',  password: 'password123', genres: ['Science Fiction', 'Fiction'],yearlyGoal: 24, motivation: 'learn',      onboardingComplete: true },
   ];
   for (const member of teamMembers) {
     await User.create(member);
@@ -56,6 +57,10 @@ async function seedDemoData() {
     name: 'Adel Alawad',
     email: 'adel@shelflife.com',
     password: 'password123',
+    genres: ['Fiction', 'Philosophy', 'Self-Help', 'Classics'],
+    yearlyGoal: 24,
+    motivation: 'grow',
+    onboardingComplete: true,
   });
 
   const books = [

@@ -27,7 +27,16 @@ const connectDB = async () => {
     mongod = await MongoMemoryServer.create();
     const uri = mongod.getUri();
     const conn = await mongoose.connect(uri);
-    console.log(`MongoDB In-Memory Connected: ${conn.connection.host}`);
+    console.log('');
+    console.log('  ┌─────────────────────────────────────────────────────────┐');
+    console.log('  │  MODE: IN-MEMORY MongoDB (development)                  │');
+    console.log('  │  • Database lives in RAM — wiped on every restart       │');
+    console.log('  │  • Demo data re-seeds automatically                     │');
+    console.log('  │  • For persistence: set MONGO_URI to a real instance    │');
+    console.log('  │    (e.g. MongoDB Atlas) in .env                         │');
+    console.log(`  │  Connected: ${conn.connection.host.padEnd(44)}│`);
+    console.log('  └─────────────────────────────────────────────────────────┘');
+    console.log('');
   } catch (error) {
     console.error(`Error: ${error.message}`);
     process.exit(1);
