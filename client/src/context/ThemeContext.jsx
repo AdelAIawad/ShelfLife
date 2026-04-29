@@ -4,14 +4,14 @@ const ThemeContext = createContext();
 const STORAGE_KEY = 'shelflife-theme';
 
 function getInitialTheme() {
-  // 1. user-saved preference
+  // 1. user-saved preference (always wins)
   if (typeof window !== 'undefined') {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved === 'light' || saved === 'dark') return saved;
-    // 2. OS preference
-    if (window.matchMedia?.('(prefers-color-scheme: light)').matches) return 'light';
   }
-  return 'dark';
+  // 2. Default for first-time visitors: LIGHT
+  //    (matches the brand's "warm cream library" aesthetic)
+  return 'light';
 }
 
 export function ThemeProvider({ children }) {

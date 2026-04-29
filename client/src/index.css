@@ -1,7 +1,7 @@
 /* ============================================================
    ShelfLife — Glassmorphism Design System
    Blue-brown identity, frosted glass, fluid animations,
-   personal journal aesthetic inspired by Apple Music / Spotify
+   intimate personal-journal aesthetic for the reflective reader.
    ============================================================ */
 @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
@@ -97,73 +97,292 @@
 }
 
 /* ============================================================
-   LIGHT THEME — warm cream library aesthetic
-   Same brand sapphire/copper accents, inverted surfaces.
+   LIGHT THEME — "sunlight on cream paper"
+   Warm cream surfaces, navy text, sapphire/copper accents preserved.
    Triggered via <html data-theme="light">.
    ============================================================ */
 [data-theme="light"] {
-  --bg-page: #F4F1EA;
-  --bg-surface: rgba(255, 255, 255, 0.65);
-  --bg-elevated: rgba(255, 255, 255, 0.75);
+  /* Surfaces — warm cream library */
+  --bg-page: #F7F3EB;
+  --bg-surface: rgba(255, 252, 247, 0.85);
+  --bg-elevated: rgba(255, 252, 247, 0.92);
   --bg-hover: rgba(74, 124, 181, 0.08);
   --bg-active: rgba(74, 124, 181, 0.14);
 
-  --text-primary: #1E2A3A;
+  /* Text — warm dark on cream */
+  --text-primary: #1F2433;
   --text-secondary: #4A5670;
-  --text-muted: #6B7B95;
-  --text-faint: #A0AABC;
+  --text-muted: #7A8499;
+  --text-faint: #ADB5C5;
 
+  /* Borders — soft warm */
   --border: rgba(30, 58, 95, 0.10);
-  --border-light: rgba(30, 58, 95, 0.06);
+  --border-light: rgba(30, 58, 95, 0.05);
   --border-hover: rgba(30, 58, 95, 0.22);
-  --border-glass: rgba(30, 58, 95, 0.12);
+  --border-glass: rgba(30, 58, 95, 0.10);
 
-  --shadow-sm: 0 2px 6px rgba(30, 58, 95, 0.06);
-  --shadow-md: 0 4px 14px rgba(30, 58, 95, 0.08);
-  --shadow-card: 0 6px 24px rgba(30, 58, 95, 0.10);
-  --shadow-lg: 0 14px 40px rgba(30, 58, 95, 0.12);
-  --shadow-xl: 0 20px 56px rgba(30, 58, 95, 0.16);
-  --shadow-glow: 0 0 24px rgba(74, 124, 181, 0.18);
-  --shadow-warm: 0 0 24px rgba(196, 133, 76, 0.18);
+  /* Shadows — soft warm depth */
+  --shadow-sm: 0 1px 3px rgba(30, 41, 70, 0.05);
+  --shadow-md: 0 4px 12px rgba(30, 41, 70, 0.07);
+  --shadow-card: 0 6px 20px rgba(30, 41, 70, 0.08);
+  --shadow-lg: 0 12px 36px rgba(30, 41, 70, 0.10);
+  --shadow-xl: 0 20px 56px rgba(30, 41, 70, 0.12);
+  --shadow-glow: 0 0 20px rgba(74, 124, 181, 0.15);
+  --shadow-warm: 0 0 20px rgba(196, 133, 76, 0.15);
 
-  --glass-bg: rgba(255, 255, 255, 0.55);
-  --glass-bg-heavy: rgba(255, 255, 255, 0.85);
-  --glass-bg-light: rgba(255, 255, 255, 0.40);
+  /* Glass tokens — solid-feeling cream cards */
+  --glass-bg: rgba(255, 252, 247, 0.85);
+  --glass-bg-heavy: rgba(252, 248, 240, 0.95);
+  --glass-bg-light: rgba(255, 252, 247, 0.65);
   --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.7);
 
-  --mesh-c1: rgba(196, 133, 76, 0.18);
-  --mesh-c2: rgba(74, 124, 181, 0.18);
-  --mesh-c3: rgba(255, 245, 230, 0.55);
+  /* Mesh — very subtle warm tints over cream */
+  --mesh-c1: rgba(196, 133, 76, 0.10);
+  --mesh-c2: rgba(74, 124, 181, 0.10);
+  --mesh-c3: rgba(255, 224, 180, 0.18);
 }
 
-/* Light-theme nav: subtle border instead of dark glow */
-[data-theme="light"] .top-nav { border-bottom: 1px solid var(--border-glass); }
-[data-theme="light"] .top-nav.scrolled { background: rgba(255, 255, 255, 0.92); }
-[data-theme="light"] .notification-dot { border-color: rgba(255, 255, 255, 0.85); }
+/* ───── Light theme: targeted overrides for hardcoded dark elements ───── */
 
-/* Light-theme charts need darker text on lighter bg */
-[data-theme="light"] .chart-card canvas + div,
+/* Nav border + scrolled state */
+[data-theme="light"] .top-nav { border-bottom: 1px solid var(--border-glass); }
+[data-theme="light"] .top-nav.scrolled {
+  background: rgba(252, 248, 240, 0.95);
+  box-shadow: var(--shadow-md);
+}
+[data-theme="light"] .notification-dot { border-color: rgba(252, 248, 240, 0.95); }
+
+/* Mobile nav drawer */
+[data-theme="light"] .top-nav-links.mobile-open,
+[data-theme="light"] .top-nav-links { background: var(--glass-bg-heavy); }
+
+/* Active nav link gradient stays brand — but text needs to be white still */
+[data-theme="light"] .top-nav-links a.active { color: #fff; }
+
+/* Charts — text + grid */
+[data-theme="light"] .chart-card { background: var(--glass-bg); }
 [data-theme="light"] .donut-center { color: var(--text-primary); }
 
-/* Light-theme login left panel keeps brand gradient (looks great in both) */
+/* Login: keep the brand-gradient left panel (looks great in both),
+   but right side becomes cream */
 [data-theme="light"] .login-right { background: var(--bg-page); }
-[data-theme="light"] .login-card { background: rgba(255, 255, 255, 0.75); }
+[data-theme="light"] .login-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(30, 41, 70, 0.08);
+  box-shadow: 0 20px 60px rgba(30, 41, 70, 0.10), 0 4px 16px rgba(30, 41, 70, 0.06);
+}
+[data-theme="light"] .login-card .login-brand h2 { color: var(--text-primary); }
+[data-theme="light"] .login-card .login-brand p { color: var(--text-muted); }
+[data-theme="light"] .login-error {
+  background: rgba(196, 90, 90, 0.08);
+  border: 1px solid rgba(196, 90, 90, 0.25);
+  color: #B43A3A;
+}
+[data-theme="light"] .form-group label {
+  color: var(--text-secondary);
+}
+[data-theme="light"] .form-group input {
+  background: #FAF7F1;
+  color: var(--text-primary);
+  border-color: rgba(30, 41, 70, 0.12);
+}
+[data-theme="light"] .form-group input::placeholder { color: var(--text-faint); }
+[data-theme="light"] .form-group input:focus {
+  border-color: var(--clr-sapphire);
+  box-shadow: 0 0 0 3px rgba(74, 124, 181, 0.15);
+}
+[data-theme="light"] .login-divider::before {
+  background: rgba(30, 41, 70, 0.12);
+}
+[data-theme="light"] .login-divider span {
+  background: #FFFFFF;
+  color: var(--text-muted);
+}
+[data-theme="light"] .login-card .btn-outline {
+  background: transparent;
+  border-color: rgba(30, 41, 70, 0.15);
+  color: var(--text-primary);
+}
+[data-theme="light"] .login-card .btn-outline:hover {
+  background: var(--bg-hover);
+  border-color: rgba(30, 41, 70, 0.30);
+}
+/* Floating books emojis sit on cream — slightly more opacity to remain subtle but visible */
+[data-theme="light"] .floating-books span { filter: grayscale(0.8) brightness(0.7); }
 
-/* Light-theme onboarding mesh */
+/* Onboarding */
 [data-theme="light"] .onboarding-page { background: var(--bg-page); }
 [data-theme="light"] .onboarding-bg {
   background:
-    radial-gradient(circle at 20% 15%, rgba(196, 133, 76, 0.20), transparent 50%),
-    radial-gradient(circle at 80% 85%, rgba(74, 124, 181, 0.18), transparent 55%),
-    radial-gradient(circle at 50% 50%, rgba(255, 245, 230, 0.45), transparent 60%);
+    radial-gradient(circle at 20% 15%, rgba(196, 133, 76, 0.12), transparent 50%),
+    radial-gradient(circle at 80% 85%, rgba(74, 124, 181, 0.10), transparent 55%),
+    radial-gradient(circle at 50% 50%, rgba(255, 224, 180, 0.18), transparent 60%);
+}
+[data-theme="light"] .onboarding-card { background: var(--glass-bg); }
+[data-theme="light"] .onboarding-step-dot.active { color: #fff; }
+
+/* My Shelf — book card overlay on hover (was hardcoded midnight) */
+[data-theme="light"] .book-card-overlay {
+  background: linear-gradient(to top, rgba(31, 36, 51, 0.88) 0%, rgba(31, 36, 51, 0.50) 40%, transparent 70%);
 }
 
-/* Light-theme scrollbar */
+/* Reading card placeholder (no cover) */
+[data-theme="light"] .reading-card-placeholder {
+  background: linear-gradient(135deg, var(--brand-secondary), var(--brand-accent));
+  opacity: 0.85;
+}
+[data-theme="light"] .no-cover {
+  background: linear-gradient(135deg, var(--clr-sapphire), var(--brand-accent));
+  color: #fff;
+}
+
+/* Skeleton loader */
+[data-theme="light"] .skeleton {
+  background: linear-gradient(90deg,
+    rgba(30, 41, 70, 0.06) 25%,
+    rgba(30, 41, 70, 0.10) 37%,
+    rgba(30, 41, 70, 0.06) 63%);
+  background-size: 400% 100%;
+}
+
+/* Continue Reading hero glow */
+[data-theme="light"] .continue-reading-hero::before {
+  background: radial-gradient(ellipse 400px 300px at 100% 0%, rgba(196, 133, 76, 0.15), transparent);
+}
+[data-theme="light"] .crh-cover-shadow {
+  background: radial-gradient(ellipse 60% 60% at center, rgba(196, 133, 76, 0.25), transparent 70%);
+}
+
+/* Cards & surfaces — explicit cream values (defense-in-depth in case
+   the variable cascade is interrupted by some specific :root rule) */
+[data-theme="light"] .continue-reading-hero,
+[data-theme="light"] .empty-hero,
+[data-theme="light"] .stat-card,
+[data-theme="light"] .reading-card,
+[data-theme="light"] .home-stat-mini,
+[data-theme="light"] .home-book-card,
+[data-theme="light"] .home-reco-card,
+[data-theme="light"] .home-reco-btn,
+[data-theme="light"] .search-book-card,
+[data-theme="light"] .chart-card,
+[data-theme="light"] .footer-card {
+  background: rgba(255, 252, 247, 0.92) !important;
+  border-color: rgba(30, 41, 70, 0.10) !important;
+}
+
+/* Page bg explicit (in case body var resolution is being shadowed somehow) */
+[data-theme="light"] body { background: #F7F3EB !important; }
+[data-theme="light"] .home-page,
+[data-theme="light"] .review-page,
+[data-theme="light"] .main-content { background: transparent !important; }
+
+/* Hero card content text in light mode — was inheriting white from dark */
+[data-theme="light"] .crh-title,
+[data-theme="light"] .crh-author,
+[data-theme="light"] .crh-eyebrow,
+[data-theme="light"] .home-greeting-time,
+[data-theme="light"] .home-greeting-name,
+[data-theme="light"] .home-stat-mini-label,
+[data-theme="light"] .home-stat-mini-value,
+[data-theme="light"] .home-stat-mini-sub,
+[data-theme="light"] .crh-pages,
+[data-theme="light"] .crh-eta,
+[data-theme="light"] .home-section-header h3,
+[data-theme="light"] .shelf-section-header h2,
+[data-theme="light"] .hero-header__title,
+[data-theme="light"] .hero-header__subtitle {
+  color: var(--text-primary) !important;
+}
+[data-theme="light"] .home-greeting-time,
+[data-theme="light"] .home-stat-mini-label,
+[data-theme="light"] .crh-pages,
+[data-theme="light"] .hero-header__subtitle { color: var(--text-muted) !important; }
+[data-theme="light"] .crh-eta,
+[data-theme="light"] .home-stat-mini-sub { color: var(--text-faint) !important; }
+
+/* Empty states */
+[data-theme="light"] .empty-hero,
+[data-theme="light"] .empty-state {
+  background: var(--glass-bg);
+  color: var(--text-secondary);
+}
+
+/* Settings + modals */
+[data-theme="light"] .modal-content,
+[data-theme="light"] .dropdown-panel { background: var(--glass-bg-heavy); }
+[data-theme="light"] .settings-row { border-bottom-color: var(--border-light); }
+
+/* Search bar in nav */
+[data-theme="light"] .search-bar-nav {
+  background: var(--glass-bg-light);
+  border-color: var(--border-glass);
+}
+
+/* Footer — full visibility pass for cream bg */
+[data-theme="light"] .app-footer {
+  background: rgba(252, 248, 240, 0.92);
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border-glass);
+}
+[data-theme="light"] .footer-brand { color: var(--text-primary); }
+[data-theme="light"] .footer-tagline { color: var(--text-muted); }
+[data-theme="light"] .footer-links button { color: var(--text-muted); }
+[data-theme="light"] .footer-links button:hover { color: var(--brand-accent); }
+[data-theme="light"] .footer-copy { border-top-color: var(--border-light); }
+[data-theme="light"] .footer-copy-animated { color: var(--text-faint); }
+[data-theme="light"] .footer-quote {
+  background: rgba(255, 252, 247, 0.50);
+}
+[data-theme="light"] .footer-quote p { color: var(--text-muted); }
+[data-theme="light"] .footer-quote span { color: var(--text-faint); }
+[data-theme="light"] .footer-card { background: var(--glass-bg); }
+[data-theme="light"] .footer-shelf-edge { opacity: 0.65; }
+
+/* Progress bar track */
+[data-theme="light"] .progress-bar { background: rgba(30, 41, 70, 0.08); }
+
+/* Scrollbar + selection */
 [data-theme="light"] ::-webkit-scrollbar-thumb { background: rgba(30, 58, 95, 0.20); }
 [data-theme="light"] ::-webkit-scrollbar-thumb:hover { background: rgba(30, 58, 95, 0.35); }
 [data-theme="light"] ::selection { background: rgba(196, 133, 76, 0.30); color: var(--text-primary); }
 
-/* Smooth theme transitions on common surfaces */
+/* Search input on Explore page */
+[data-theme="light"] .search-input-wrapper { background: var(--glass-bg); }
+[data-theme="light"] .review-textarea {
+  background: var(--glass-bg);
+  color: var(--text-primary);
+}
+[data-theme="light"] .review-textarea::placeholder { color: var(--text-muted); }
+
+/* Genre tags / filter chips */
+[data-theme="light"] .genre-tag {
+  background: var(--glass-bg);
+  color: var(--text-secondary);
+}
+[data-theme="light"] .genre-tag.active {
+  background: var(--gradient-brand);
+  color: #fff;
+}
+
+/* Toast notifications */
+[data-theme="light"] .toast {
+  background: var(--glass-bg-heavy);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Buttons that were dark-glass */
+[data-theme="light"] .btn-secondary,
+[data-theme="light"] .btn-outline,
+[data-theme="light"] .btn-hero-action--ghost {
+  background: var(--glass-bg);
+  color: var(--text-primary);
+}
+
+/* Star rating empty state */
+[data-theme="light"] .book-card-rating .star-empty { color: rgba(30, 58, 95, 0.20); }
+
+/* Smooth transitions on theme swap */
 body,
 .top-nav,
 .modal-content,
@@ -174,8 +393,11 @@ body,
 .search-book-card,
 .reading-card,
 .home-book-card,
+.home-stat-mini,
 .continue-reading-hero,
-.onboarding-card {
+.onboarding-card,
+.app-footer,
+.footer-card {
   transition: background-color 0.35s var(--ease), color 0.35s var(--ease), border-color 0.35s var(--ease);
 }
 
@@ -1051,6 +1273,172 @@ img { max-width: 100%; display: block; }
   .avatar { width: 28px; height: 28px; font-size: 11px; }
   .modal-content { width: 96vw; }
   .home-section-header h3 { font-size: 17px; }
+}
+
+/* ============================================================
+   PHONE COMFORT — comprehensive pass for actual phone widths
+   ============================================================ */
+@media (max-width: 640px) {
+  /* Prevent iOS auto-zoom on input focus (must be 16px+) */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="number"],
+  textarea,
+  select { font-size: 16px !important; }
+
+  /* Larger touch targets — 44x44 minimum (Apple HIG) */
+  .nav-icon-btn,
+  .nav-mobile-toggle,
+  .shelf-nav button,
+  .btn-secondary,
+  .btn-outline,
+  .btn-hero-action,
+  .btn-hero-action--ghost {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Genre tags — bigger, easier to tap */
+  .genre-tag {
+    padding: 10px 16px;
+    font-size: 13px;
+    min-height: 38px;
+    border-radius: var(--r-full);
+  }
+  .genre-tag-list { gap: 8px; }
+
+  /* Search input — full width, comfortable */
+  .search-input-wrapper {
+    padding: 14px 16px;
+    border-radius: var(--r-md);
+  }
+
+  /* Continue Reading hero — column layout, optimized */
+  .continue-reading-hero {
+    flex-direction: column;
+    gap: var(--sp-base);
+    padding: var(--sp-base);
+    text-align: left;
+  }
+  .crh-cover-wrap {
+    width: 140px; height: 210px;
+    margin: 0 auto var(--sp-sm);
+  }
+  .crh-title { font-size: 22px; line-height: 1.2; }
+  .crh-author { font-size: 13px; margin-bottom: var(--sp-base); }
+  .crh-pct { font-size: 28px; }
+  .crh-pages { font-size: 12px; }
+  .crh-eyebrow { font-size: 10px; margin-bottom: var(--sp-sm); }
+  .crh-progress-wrap { margin-bottom: var(--sp-base); }
+
+  /* Home stats — stack in single column for comfort */
+  .home-stats-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .home-stat-mini {
+    padding: var(--sp-base);
+    gap: var(--sp-sm);
+  }
+  .home-stat-mini-icon {
+    width: 40px; height: 40px;
+    font-size: 18px;
+    border-radius: var(--r-sm);
+  }
+  .home-stat-mini-value { font-size: 18px; }
+  .home-stat-mini-label { font-size: 10px; }
+  .home-stat-mini-sub { font-size: 11px; }
+
+  /* Greeting */
+  .home-greeting { margin-bottom: var(--sp-base); }
+  .home-greeting-name { font-size: 26px; }
+  .home-greeting-time { font-size: 11px; }
+
+  /* Home page padding tighter */
+  .home-page { padding: var(--sp-base) var(--sp-sm) var(--sp-2xl); }
+
+  /* Section spacing */
+  .home-section { margin-bottom: var(--sp-xl); }
+  .home-section-header { margin-bottom: var(--sp-sm); padding: 0 var(--sp-xs); }
+  .home-section-link { font-size: 12px; }
+
+  /* Recommendation cards — narrower to fit comfortably */
+  .home-reco-card { width: 220px; padding: var(--sp-base); }
+  .home-reco-card h4 { font-size: 15px; }
+
+  /* Book card hover overlay → tap to reveal on mobile */
+  .book-card-overlay { opacity: 1; padding: 8px; }
+  .overlay-btn { font-size: 11px; padding: 6px 10px; }
+
+  /* My Shelf section header */
+  .shelf-section-header { padding: 0 var(--sp-xs); margin-bottom: var(--sp-sm); }
+  .shelf-section-header h2 { font-size: 18px; }
+  .shelf-section-header .badge { font-size: 11px; padding: 2px 8px; }
+
+  /* Add Book + Sort row */
+  .shelf-controls-row {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+  .shelf-controls-row > * { width: 100%; justify-content: center; }
+
+  /* Onboarding wizard tighter on phone */
+  .onboarding-card { padding: var(--sp-base); }
+  .onboarding-title { font-size: 22px; }
+  .onboarding-sub { font-size: 13px; }
+  .onboarding-genre-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .onboarding-genre { padding: 12px 10px; font-size: 13px; min-height: 44px; }
+  .onboarding-goal-grid { grid-template-columns: repeat(2, 1fr); }
+  .onboarding-goal-card { padding: 16px 12px; }
+  .onboarding-goal-num { font-size: 1.6rem; }
+  .onboarding-motiv { padding: 14px 16px; }
+  .onboarding-motiv-icon { width: 36px; height: 36px; font-size: 16px; }
+
+  /* Login: stack vertically, hide left brand panel */
+  .login-page { flex-direction: column; }
+  .login-left { display: none; }
+  .login-right { padding: var(--sp-xl) var(--sp-base); min-height: 100vh; }
+  .login-card { padding: 28px 22px; width: 100%; }
+
+  /* Insights / Dashboard cards */
+  .dashboard-summary-grid { grid-template-columns: 1fr; gap: 10px; }
+  .summary-card { padding: var(--sp-base); }
+  .achievements-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+
+  /* Rate & Review */
+  .review-page { padding: 0 var(--sp-sm); }
+  .review-cover { width: 140px; height: 210px; }
+  .review-title { font-size: 22px; }
+  .review-author { font-size: 14px; }
+  .star-rating button { font-size: 28px; padding: 6px; }
+
+  /* Footer compact */
+  .footer-inner { padding: 16px var(--sp-base) 8px; }
+  .footer-quote { padding: 8px var(--sp-base) 16px; }
+  .footer-quote p { font-size: 12px; }
+
+  /* Modal full-screen feeling on phone */
+  .modal-content {
+    width: 100vw;
+    max-height: 92vh;
+    border-radius: var(--r-lg) var(--r-lg) 0 0;
+    margin-bottom: 0;
+  }
+}
+
+/* Very narrow phones (iPhone SE, small Android) */
+@media (max-width: 380px) {
+  .top-nav-brand .brand-name { display: none; }
+  .home-greeting-name { font-size: 22px; }
+  .crh-title { font-size: 20px; }
+  .crh-cover-wrap { width: 120px; height: 180px; }
+  .book-grid-scroll > * { flex: 0 0 110px; }
+  .home-book-card { width: 110px; }
+  .onboarding-genre-grid { grid-template-columns: 1fr; }
+  .onboarding-goal-grid { grid-template-columns: 1fr; }
 }
 
 /* ============================================================

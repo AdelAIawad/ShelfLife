@@ -226,7 +226,7 @@ export default function MyShelf() {
         subtitle={`${books.length} book${books.length !== 1 ? 's' : ''} across your reading journey — organized, curated, and yours.`}
         variant="shelf"
         actions={
-          <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+          <div className="shelf-controls-row" style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
             <Link to="/search" className="btn-hero-action"><FiPlus /> Add Book</Link>
             <div className="shelf-sort-wrap">
               <label className="shelf-sort-label">Sort:</label>

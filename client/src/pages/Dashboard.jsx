@@ -10,6 +10,7 @@ import {
   FiTrendingUp, FiCalendar, FiAward, FiBookOpen, FiLayers, FiArchive,
   FiZap, FiCompass, FiHexagon, FiEdit3
 } from 'react-icons/fi';
+import { useTheme } from '../context/ThemeContext';
 
 const BADGE_ICONS = {
   'book-open': FiBookOpen,
@@ -78,6 +79,16 @@ export default function Dashboard() {
   const [chartView, setChartView] = useState('M');
   const [toast, setToast] = useState('');
   const navigate = useNavigate();
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
+
+  // Theme-aware Chart.js colors
+  const chartTooltipBg   = isLight ? 'rgba(252, 248, 240, 0.95)' : 'rgba(15, 22, 36, 0.92)';
+  const chartTooltipText = isLight ? '#1F2433' : '#E8ECF4';
+  const chartTooltipBorder = isLight ? 'rgba(30, 41, 70, 0.10)' : 'rgba(255, 255, 255, 0.10)';
+  const chartGrid        = isLight ? 'rgba(30, 41, 70, 0.06)' : 'rgba(255, 255, 255, 0.05)';
+  const chartTickColor   = isLight ? '#7A8499' : '#6B7B95';
+  const donutBorderColor = isLight ? 'rgba(252, 248, 240, 0.95)' : 'rgba(15, 22, 36, 0.8)';
 
   useEffect(() => {
     axios.get('/api/books/stats')
@@ -125,16 +136,16 @@ export default function Dashboard() {
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: 'rgba(15, 22, 36, 0.9)', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
-        titleColor: '#E8ECF4', bodyColor: '#E8ECF4',
+        backgroundColor: chartTooltipBg, borderColor: chartTooltipBorder, borderWidth: 1,
+        titleColor: chartTooltipText, bodyColor: chartTooltipText,
         titleFont: { family: 'Inter', size: 12 }, bodyFont: { family: 'Inter', size: 13, weight: '500' },
         padding: 12, cornerRadius: 8, displayColors: false,
         callbacks: { label: ctx => `${ctx.raw} book${ctx.raw !== 1 ? 's' : ''} completed` },
       },
     },
     scales: {
-      y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11, family: 'Inter' }, color: '#6B7B95' }, grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false }, border: { display: false } },
-      x: { ticks: { font: { size: 11, family: 'Inter' }, color: '#6B7B95' }, grid: { display: false }, border: { display: false } },
+      y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11, family: 'Inter' }, color: chartTickColor }, grid: { color: chartGrid, drawBorder: false }, border: { display: false } },
+      x: { ticks: { font: { size: 11, family: 'Inter' }, color: chartTickColor }, grid: { display: false }, border: { display: false } },
     },
     animation: { duration: 600, easing: 'easeOutQuart' },
   };
@@ -144,7 +155,7 @@ export default function Dashboard() {
     datasets: [{
       data: (stats?.genreBreakdown || []).map(g => g.count),
       backgroundColor: CHART_COLORS.slice(0, (stats?.genreBreakdown || []).length),
-      borderWidth: 2, borderColor: 'rgba(15, 22, 36, 0.8)', hoverOffset: 4,
+      borderWidth: 2, borderColor: donutBorderColor, hoverOffset: 4,
     }],
   };
 
@@ -159,8 +170,8 @@ export default function Dashboard() {
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: 'rgba(15, 22, 36, 0.9)', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
-        titleColor: '#E8ECF4', bodyColor: '#E8ECF4',
+        backgroundColor: chartTooltipBg, borderColor: chartTooltipBorder, borderWidth: 1,
+        titleColor: chartTooltipText, bodyColor: chartTooltipText,
         padding: 12, cornerRadius: 8,
         titleFont: { family: 'Inter' }, bodyFont: { family: 'Inter', weight: '500' },
       },
